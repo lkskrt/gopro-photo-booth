@@ -1,17 +1,18 @@
 import { NextResponse } from 'next/server';
-
-const { GOPRO_BASE_URL } = process.env;
+import {
+  GOPRO_BASE_URL,
+  PHOTO_DEST,
+  handleError,
+  photoPublicPath,
+} from '@/utils';
+import { createWriteStream } from 'fs';
+import { pipeline } from 'stream/promises';
+import { resolve } from 'path';
 
 const controlStatusMap: Record<number, string> = {
   0: 'Camera Idle',
   1: 'Camera Control',
   2: 'Camera External',
-};
-
-const handleError = (response: Response, message: string) => {
-  if (response.status !== 200) {
-    throw new Error(`${message}: ${response.statusText} (${response.status})`);
-  }
 };
 
 export async function POST() {
@@ -79,7 +80,25 @@ export async function POST() {
 
   console.log(`Latest photo: ${latestPhotoUrl}`);
 
-  return NextResponse.json({
-    url: latestPhotoUrl,
-  });
+  const photoResponse = await fetch(latestPhotoUrl);
+  handleError(photoResponse, 'Could not fetch latest photo');
+
+  if (!photoResponse.body) {
+    throw new Error('Latest photo has no body');
+  }
+
+  console.log('Downloading photo');
+  await pipeline(
+    photoResponse.body as unknown as NodeJS.ReadableStream,
+    createWriteStream(resolve(PHOTO_DEST, latestPhoto)),
+  );
+
+  return NextResponse.json(
+    {
+      url: photoPublicPath(latestPhoto),
+    },
+    {
+      status: 201,
+    },
+  );
 }

@@ -12,4 +12,30 @@
   background-size: cover;
   background-repeat: no-repeat;
   transition: all 0.5s ease;
+  text-shadow: 0 0 0.3em black;
+}
+
+.countdownText {
+  font-size: 0.8em;
+  margin-bottom: 1em;
+}
+
+.countdownNumber {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.error {
+  font-family: monospace;
+  color: #ffcc00;
+  margin-bottom: 1em;
+}
+
+@keyframes shutter {
+  from {
+    background-color: white;
+  }
+  to {
+    background-color: black;
+  }
 }
