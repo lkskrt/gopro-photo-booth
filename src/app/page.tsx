@@ -6,7 +6,7 @@ import { useState, useCallback, useEffect, useRef, Fragment } from 'react';
 import { preloadImage } from '@/utils';
 
 export default function Home() {
-  const lastPhotoTaken = useRef<Date | null>();
+  const lastPhotoTaken = useRef<Date | null>(null);
   const rotation = useRef<string[]>([]);
   const [photo, setPhoto] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);

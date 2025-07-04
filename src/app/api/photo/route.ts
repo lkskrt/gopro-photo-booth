@@ -87,10 +87,11 @@ export async function POST() {
     throw new Error('Latest photo has no body');
   }
 
-  console.log('Downloading photo');
+  const dest = resolve(PHOTO_DEST, latestPhoto);
+  console.log(`Downloading photo to ${dest}`);
   await pipeline(
     photoResponse.body as unknown as NodeJS.ReadableStream,
-    createWriteStream(resolve(PHOTO_DEST, latestPhoto)),
+    createWriteStream(dest),
   );
 
   return NextResponse.json(
